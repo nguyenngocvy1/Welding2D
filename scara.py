@@ -12,12 +12,9 @@
 
 from math import *
 import json
-import numpy as np
-import cv2
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-data = {'theta1':[],'theta2':[],'x':[],'y':[]}
 def animation_frame(i):
     t1 = theta1[i]
     t2 = theta2[i]
@@ -34,6 +31,7 @@ def animation_frame(i):
     return line1, line2,
 
 #========================= SCARA ROBOT CONFIGURATION =========================
+data = {'theta1':[],'theta2':[],'x':[],'y':[]}
 x0 = 0
 y0 = 0
 l1 = 1 #m for first robotic arm
@@ -48,8 +46,8 @@ y = []
 
 #===================== DRAW =================================
 fig, ax = plt.subplots()
-ax.set_xlim([0,2])
-ax.set_ylim([0,2])
+ax.set_xlim([-2,2])
+ax.set_ylim([-2,2])
 line1, = ax.plot([],[])
 line2, = ax.plot([],[])
 
@@ -65,7 +63,7 @@ for i in range(theta_start,theta_end+1,n_theta):
         theta1.append(q1)
         theta2.append(q2)
 
-anime = FuncAnimation(fig,func=animation_frame, interval=10)
+anime = FuncAnimation(fig,func=animation_frame, interval=1)
 data['theta1'] = theta1
 data['theta2'] = theta2
 data['x'] = x

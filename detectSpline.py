@@ -32,25 +32,33 @@ def write_cloud_points(text, file_name):
     f = open(file_name,'w')
     f.write(text)
     f.close()
+
+def show(img_name, img):
+    screen_width, screen_height = GetSystemMetrics(0), GetSystemMetrics(1)
+    img_resize = cv2.resize(img,(screen_width,screen_height),interpolation=cv2.INTER_LINEAR)
+    cv2.imshow(img_name,img_resize)
+    
  
 if __name__ == '__main__':
-    img = cv2.imread('test1.jpg')
+    img = cv2.imread('test6.jpg')
     img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     img_gray = cv2.medianBlur(img,9)
     img_gray = remove_shadows(img_gray)
+    show('gray',img_gray)
 
-    _, img_th = cv2.threshold(img_gray, 245, 255, cv2.THRESH_BINARY)
+    _, img_th = cv2.threshold(img_gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    show('th',img_th)
     img_th = cv2.bitwise_not(img_th)
     img_th = connect_broken_lines(img_th)
-
     img_th = remove_background(img_th)
+    show('bg',img_th)
     # img_th = cv2.ximgproc.thinning(img_th)
 
     contours, _ = cv2.findContours(img_th, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     count = 0
     text = ""
     for contour in contours:
-        approx = cv2.approxPolyDP(contour, 0.009 * cv2.arcLength(contour, True), True)
+        approx = cv2.approxPolyDP(contour, 0.0009 * cv2.arcLength(contour, True), True)
         contour_list = approx.ravel()
         for i in range(0,len(contour_list)):
                 if i % 2 == 0:
@@ -62,9 +70,7 @@ if __name__ == '__main__':
         write_cloud_points(text, 'cloud_points{}.txt'.format(count))
         count += 1
 
-    screen_width, screen_height = GetSystemMetrics(0), GetSystemMetrics(1)
-    img_resize = cv2.resize(img,(screen_width,screen_height),interpolation=cv2.INTER_LINEAR)
-    cv2.imshow('img',img_resize)
-    cv2.imwrite('result11.png',img)
+    show('img',img)
+    # cv2.imwrite('result11.png',img)
     cv2.waitKey(0)
 
